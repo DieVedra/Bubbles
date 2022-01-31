@@ -3,7 +3,7 @@ using UnityEngine;
 
 public abstract class Strategy
 {
-    public Action<Comet> OnRemakeComet;
+    public Action<Ball> OnRemakeBall;
     public Action OnCkickSound;
     public Action OnRemakeClickSound;
     public Action OnParticleSound1;
@@ -15,16 +15,16 @@ public abstract class Strategy
         particle.TransferToPosition(position);
         particle.PlayParticle();
     }
-    protected void Move(Comet comet, Vector3 position)
+    protected void Move(Ball ball, Vector3 position)
     {
-        comet.MoveToPosition(position);
+        ball.MoveToPosition(position);
     }
-    public void FallenComet(Comet comet)
+    public void FallenBall(Ball ball)
     {
-        ActivateParticles(comet.Particle, comet.Position, comet.Color, comet.Scale);
-        OnRemakeComet?.Invoke(comet);
+        ActivateParticles(ball.Particle, ball.Position, ball.Color, ball.Scale);
+        OnRemakeBall?.Invoke(ball);
     }
-    public abstract void StrategyBehaviorMove(Comet comet);
-    public abstract void StrategyBehaviorDetect(Comet comet);
-    public abstract void Accept(IStrategyVisitor strategyVisitor, Comet comet);
+    public abstract void StrategyBehaviorMove(Ball ball);
+    public abstract void StrategyBehaviorDetect(Ball ball);
+    public abstract void Accept(IStrategyVisitor strategyVisitor, Ball ball);
 }

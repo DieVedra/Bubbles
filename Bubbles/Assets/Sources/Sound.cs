@@ -1,10 +1,15 @@
 ﻿using UnityEngine;
-using UnityEngine.Audio;
 
 public class Sound
 {
+    private const string PARTICLE_EXPLOSION_CLIP1 = "AudioClips/ParticleExplosionClip1";
+    private const string PARTICLE_EXPLOSION_CLIP2 = "AudioClips/ParticleExplosionClip2";
+    private const string START_GAME_CLIP = "AudioClips/StartGameClip";
+    private const string RESUME_GAME_CLIP = "AudioClips/ResumeGameClip";
+    private const string PAUSE_GAME_CLIP = "AudioClips/PauseGameClip";
+    private const string OVER_GAME_CLIP = "AudioClips/OverGameClip";
+    private const string BALL_CLIP1 = "AudioClips/BallClip1";
     private AudioSource _audioSource;
-    private AudioMixerGroup _masterGroup;
     private MobileVibration _mobileVibration = new MobileVibration();
     private AudioClip _particleExplosionClip1;
     private AudioClip _particleExplosionClip2;
@@ -13,30 +18,22 @@ public class Sound
     private AudioClip _pauseGameClip;
     private AudioClip _overGameClip;
     private AudioClip _ballClip1;
-    private AudioClip _ballClip2;
 
-    public Sound(AudioSource audioSource, AudioMixerGroup masterGroup)
+    public Sound(AudioSource audioSource)
     {
         _audioSource = audioSource;
-        _masterGroup = masterGroup;
-        _audioSource.outputAudioMixerGroup = masterGroup;
-        _particleExplosionClip1 = Resources.Load<AudioClip>("AudioClips/ParticleExplosionClip1");
-        _particleExplosionClip2 = Resources.Load<AudioClip>("AudioClips/ParticleExplosionClip2");
-        _startGameClip = Resources.Load<AudioClip>("AudioClips/StartGameClip");
-        _resumeGameClip = Resources.Load<AudioClip>("AudioClips/ResumeGameClip");
-        _pauseGameClip = Resources.Load<AudioClip>("AudioClips/PauseGameClip");
-        _overGameClip = Resources.Load<AudioClip>("AudioClips/OverGameClip;");
-        _ballClip1 = Resources.Load<AudioClip>("AudioClips/BallClip1");
-        _ballClip2 = Resources.Load<AudioClip>("AudioClips/BallClip2");
+        _particleExplosionClip1 = Resources.Load<AudioClip>(PARTICLE_EXPLOSION_CLIP1);
+        _particleExplosionClip2 = Resources.Load<AudioClip>(PARTICLE_EXPLOSION_CLIP2);
+        _startGameClip = Resources.Load<AudioClip>(START_GAME_CLIP);
+        _resumeGameClip = Resources.Load<AudioClip>(RESUME_GAME_CLIP);
+        _pauseGameClip = Resources.Load<AudioClip>(PAUSE_GAME_CLIP);
+        _overGameClip = Resources.Load<AudioClip>(OVER_GAME_CLIP);
+        _ballClip1 = Resources.Load<AudioClip>(BALL_CLIP1);
     }
 
     public void PlayTouch1()
     {
         _audioSource.PlayOneShot(_ballClip1);
-    }
-    public void PlayTouch2()
-    {
-        _audioSource.PlayOneShot(_ballClip2);
     }
     public void PlayExplosion1()
     {

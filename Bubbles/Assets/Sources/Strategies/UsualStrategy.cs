@@ -7,18 +7,18 @@ public class UsualStrategy : Strategy
     {
         _speed = speed;
     }
-    public override void StrategyBehaviorMove(Comet comet)
+    public override void StrategyBehaviorMove(Ball ball)
     {
-        base.Move(comet, comet.Position + Vector3.down * Time.deltaTime * _speed);
+        base.Move(ball, ball.Position + Vector3.down * Time.deltaTime * _speed);
     }
-    public override void StrategyBehaviorDetect(Comet comet)
+    public override void StrategyBehaviorDetect(Ball ball)
     {
-        base.ActivateParticles(comet.Particle, comet.Position, comet.Color, comet.Scale);
+        base.ActivateParticles(ball.Particle, ball.Position, ball.Color, ball.Scale);
         base.OnParticleSound1?.Invoke();
-        base.OnRemakeComet?.Invoke(comet);
+        base.OnRemakeBall?.Invoke(ball);
     }
-    public override void Accept(IStrategyVisitor strategyVisitor, Comet comet)
+    public override void Accept(IStrategyVisitor strategyVisitor, Ball ball)
     {
-        strategyVisitor.Visit(this, comet);
+        strategyVisitor.Visit(this, ball);
     }
 }

@@ -3,13 +3,13 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
 
-public class PlayerInput 
+public class PlayerInput
 {
     private TouchControl _touchControl;
     private Camera _camera;
-    private Comet comet;
+    private Ball ball;
     private RaycastHit2D hit;
-    public Action<Comet> OnCometDetected;
+    public Action<Ball> OnBallDetected;
     public PlayerInput()
     {
         _touchControl = new TouchControl();
@@ -37,13 +37,12 @@ public class PlayerInput
     {
         Vector3 position = _camera.ScreenToWorldPoint(new Vector3(pos.x, pos.y, _camera.nearClipPlane));
         hit = Physics2D.Raycast(position, Vector2.down);
-        if(hit)
+
+        if (hit.collider.TryGetComponent<Ball>(out ball))
         {
-            if(hit.collider.TryGetComponent<Comet>(out comet))
-            {
-                OnCometDetected?.Invoke(comet);
-            }
+            OnBallDetected?.Invoke(ball);
         }
+
     }
     public void TouchDisable()
     {

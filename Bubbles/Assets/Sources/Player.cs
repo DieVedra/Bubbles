@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 public class Player
 {
@@ -32,9 +31,9 @@ public class Player
             }
         }
     }
-    public void SetScore(Comet comet)
+    public void SetScore(Ball ball)
     {
-        _score += 1; // потом поменять
+        _score += 1;
         OnChangedScore?.Invoke(_score);
     }
     public void ResetPlayer(float value)

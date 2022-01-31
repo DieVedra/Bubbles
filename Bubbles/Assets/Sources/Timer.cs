@@ -1,10 +1,9 @@
 ﻿using System;
-// using UnityEngine;
 
 public class Timer
 {
     private float _time;
-    public float TimeMax; // придумать как от сложности регулировать в диапазоне
+    public readonly float TimeMax;
     public event Action OnWakeUp;
     public Timer(float timeMax)
     {
@@ -15,7 +14,6 @@ public class Timer
         if (_time >= TimeMax)
         {
             OnWakeUp?.Invoke();
-            // Debug.Log("OnWakeUp");
             _time = 0f;
         }
         _time += deltaTime;

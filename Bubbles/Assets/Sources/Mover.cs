@@ -3,39 +3,39 @@
 public class Mover
 {
     private readonly StrategyVisitorMove _strategyVisitorMove = new StrategyVisitorMove();
-    private IReadOnlyList<Comet> _comets;
-    public Mover(IReadOnlyList<Comet> comets)
+    private IReadOnlyList<Ball> _balls;
+    public Mover(IReadOnlyList<Ball> balls)
     {
-        _comets = comets;
+        _balls = balls;
     }
     public void MoveUpdate()
     {
-        for (int i = 0; i < _comets.Count; i++)
+        for (int i = 0; i < _balls.Count; i++)
         {
-            if (_comets[i].IsLaunched)
+            if (_balls[i].IsLaunched)
             {
-                StrategyHandler(_comets[i].Strategy, _comets[i]);
+                StrategyHandler(_balls[i].Strategy, _balls[i]);
             }
         }
     }
-    private void StrategyHandler(Strategy strategy, Comet comet)
+    private void StrategyHandler(Strategy strategy, Ball ball)
     {
-        strategy.Accept(_strategyVisitorMove, comet);
+        strategy.Accept(_strategyVisitorMove, ball);
     }
 
     private class StrategyVisitorMove : IStrategyVisitor
     {
-        public void Visit(UsualStrategy usualStrategy, Comet comet)
+        public void Visit(UsualStrategy usualStrategy, Ball ball)
         {
-            usualStrategy.StrategyBehaviorMove(comet);
+            usualStrategy.StrategyBehaviorMove(ball);
         }
-        public void Visit(JumpingStrategy jumpingStrategy, Comet comet)
+        public void Visit(JumpingStrategy jumpingStrategy, Ball ball)
         {
-            jumpingStrategy.StrategyBehaviorMove(comet);
+            jumpingStrategy.StrategyBehaviorMove(ball);
         }
-        public void Visit(AcceleratingStrategy acceleratingStrategy, Comet comet)
+        public void Visit(AcceleratingStrategy acceleratingStrategy, Ball ball)
         {
-            acceleratingStrategy.StrategyBehaviorMove(comet);
+            acceleratingStrategy.StrategyBehaviorMove(ball);
         }
 
     }

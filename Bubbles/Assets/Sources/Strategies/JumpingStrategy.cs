@@ -16,39 +16,39 @@ public class JumpingStrategy : Strategy
         _speed = speed;
         _pointGenerator = pointGenerator;
     }
-    public override void StrategyBehaviorMove(Comet comet)
+    public override void StrategyBehaviorMove(Ball ball)
     {
         if (_isJump == false)
         {
-            base.Move(comet, comet.Position + Vector3.down * Time.deltaTime * _speed);
+            base.Move(ball, ball.Position + Vector3.down * Time.deltaTime * _speed);
         }
         else if (_isJump == true)
         {
-            Jump(comet);
+            Jump(ball);
         }
     }
-    public override void StrategyBehaviorDetect(Comet comet)
+    public override void StrategyBehaviorDetect(Ball ball)
     {
         if (_isJump == false && _isReclaim == false)
         {
             base.OnCkickSound?.Invoke();
-            _pointStartJump = comet.Position;
-            _pointEndJump = _pointGenerator.GetPointToJump(comet.Scale, comet.PointStart, comet.Position);
+            _pointStartJump = ball.Position;
+            _pointEndJump = _pointGenerator.GetPointToJump(ball.Scale, ball.PointStart, ball.Position);
 
             _isJump = true;
             return;
         }
-        base.ActivateParticles(comet.Particle, comet.Position, comet.Color, comet.Scale);
+        base.ActivateParticles(ball.Particle, ball.Position, ball.Color, ball.Scale);
         base.OnParticleSound1?.Invoke();
-        base.OnRemakeComet?.Invoke(comet);
+        base.OnRemakeBall?.Invoke(ball);
     }
-    public override void Accept(IStrategyVisitor strategyVisitor, Comet comet)
+    public override void Accept(IStrategyVisitor strategyVisitor, Ball ball)
     {
-        strategyVisitor.Visit(this, comet);
+        strategyVisitor.Visit(this, ball);
     }
-    private void Jump(Comet comet)
+    private void Jump(Ball ball)
     {
-        Move(comet, Vector3.Lerp(_pointStartJump, _pointEndJump, _t));
+        Move(ball, Vector3.Lerp(_pointStartJump, _pointEndJump, _t));
         _t += _speedJump;
         if (_t >= 0.99f)
         {

@@ -17,18 +17,18 @@ public class PointGenerator
         _leftBorderPoint = leftBorderPoint;
         _rightBorderPoint = rightBorderPoint;
     }
-    public Vector3 GetStartPoint(Vector2 scaleComet)
+    public Vector3 GetStartPoint(Vector2 scaleBall)
     {
-        CalculatesEdges(scaleComet);
+        CalculatesEdges(scaleBall);
         CalculatesRange(_minBorder, _maxBorder);
         _x = _floatRange.RandomValueInRange;
         _y = _leftBorderPoint.y;
 
         return new Vector3(_x, _y, _z);
     }
-    public Vector3 GetPointToJump(Vector2 scaleComet, Vector2 startPoint, Vector2 currentPosition)
+    public Vector3 GetPointToJump(Vector2 scaleBall, Vector2 startPoint, Vector2 currentPosition)
     {
-        CalculatesEdges(scaleComet);
+        CalculatesEdges(scaleBall);
         if (startPoint.x >= 0f)
         {
             CalculatesRange(_minBorder, 0f);
@@ -39,15 +39,15 @@ public class PointGenerator
             CalculatesRange(0f, _maxBorder);
             _x = _floatRange.RandomValueInRange;
         }
-        float point = startPoint.y -= (_subtractFromYPool + scaleComet.y * _radiusMultiplier);
+        float point = startPoint.y -= (_subtractFromYPool + scaleBall.y * _radiusMultiplier);
         CalculatesRange(point, currentPosition.y);
         _y = _floatRange.RandomValueInRange;
         return new Vector3(_x, _y, _z);
     }
-    private void CalculatesEdges(Vector2 scaleComet)
+    private void CalculatesEdges(Vector2 scaleBall)
     {
-        _minBorder = _leftBorderPoint.x + scaleComet.x * _radiusMultiplier;
-        _maxBorder = _rightBorderPoint.x - scaleComet.x * _radiusMultiplier;
+        _minBorder = _leftBorderPoint.x + scaleBall.x * _radiusMultiplier;
+        _maxBorder = _rightBorderPoint.x - scaleBall.x * _radiusMultiplier;
     }
     private void CalculatesRange(float min, float max)
     {

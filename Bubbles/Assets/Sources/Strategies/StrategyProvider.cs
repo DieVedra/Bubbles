@@ -18,7 +18,7 @@ public class StrategyProvider
         _percentageModeA = new PercentageMode(pointGenerator, new Range(100f, 90f), new Range(0f, 5f), new Range(0f, 5f)); // хз что делать мб вынести куда эти параметры сложности хуй пайми не знаю куда
         _percentageModeB = new PercentageMode(pointGenerator, new Range(90f, 70f), new Range(5f, 15f), new Range(5f, 15f));
         _percentageModeC = new PercentageMode(pointGenerator, new Range(70f, 55f), new Range(15f, 30f), new Range(15f, 15f));
-        _percentageModeD = new PercentageMode(pointGenerator, new Range(55f, 40f), new Range(30, 35), new Range(15,25));
+        _percentageModeD = new PercentageMode(pointGenerator, new Range(55f, 40f), new Range(30f, 35f), new Range(15f,25f));
     }
     public void SetDifficulty(float currentDifficulty)
     {

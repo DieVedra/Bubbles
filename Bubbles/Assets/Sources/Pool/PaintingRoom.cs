@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PaintingRoom
 {
@@ -12,13 +11,13 @@ public class PaintingRoom
         _colors = colors;
         floatRange = new FloatRange(0, _colors.Length);
     }
-    public void GetColor(Comet comet)
+    public Color GetColor(Color ballColor)
     {
         do
         {
             _randomIndex = (int)floatRange.RandomValueInRange;
-        } while (_randomIndex == _previosColorIndex || _colors[_randomIndex] == comet.Color);
+        } while (_randomIndex == _previosColorIndex || _colors[_randomIndex] == ballColor);
         _previosColorIndex = _randomIndex;
-        comet.Painting(_colors[_randomIndex]);
+        return _colors[_randomIndex];
     }
 }

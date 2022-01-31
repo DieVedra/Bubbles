@@ -8,7 +8,7 @@ public class Factory : ScriptableObject
     [SerializeField] private Color _blue;
     [SerializeField] private Color _green;
     [SerializeField] private Particle _particlePrefab;
-    [SerializeField] private Comet _cometPrefab;
+    [SerializeField] private Ball _ballPrefab;
     [SerializeField] private AnimationCurve _curveScale;
     [SerializeField] private AnimationCurve _curveSpeed;
     [SerializeField] private AnimationCurve _curveStrategyProvide;
@@ -18,6 +18,8 @@ public class Factory : ScriptableObject
     private PointGenerator _pointGenerator;
     private DifficultyHandler _difficultyHandler;
     private StrategyProvider _strategyProvider;
+    private Vector2 _scaleBall;
+    private Vector3 _pointStartBall;
     public DifficultyHandler DifficultyHandler => _difficultyHandler;
     public StrategyProvider StrategyProvider => _strategyProvider;
     public void Init(PointGenerator pointGenerator)
@@ -27,33 +29,38 @@ public class Factory : ScriptableObject
         _difficultyHandler = new DifficultyHandler(_curveScale, _curveSpeed, _rangeNumberSpeed , _rangeNumberScale);
         _strategyProvider = new StrategyProvider(_curveStrategyProvide, pointGenerator);
     }
-    public Comet CreateComet(Transform parent, int index, float damage, Particle particle)
+    public Ball CreateBall(Transform parent, Particle particle)
     {
-        Vector2 scale = _difficultyHandler.GetScale();
-        Vector3 pointStart = _pointGenerator.GetStartPoint(scale);
-        Comet comet = CreateProduct(_cometPrefab, pointStart, parent);
-        comet.SetStartPoint(pointStart);
-        comet.SetScale(scale);
-        comet.SetParticle(particle);
-        comet.SetDamage(damage);
-        _paintingRoom.GetColor(comet);
-        GivesStrategy(comet);
-        comet.IsLaunched = true;
-        return comet;
+        ScaleAndPointStartInit();
+
+        Ball ball = CreateProduct(_ballPrefab, _pointStartBall, parent);
+
+        ball.SetStartPoint(_pointStartBall);
+        ball.SetScale(_scaleBall);
+
+        ball.SetParticle(particle);
+
+        ball.Painting(_paintingRoom.GetColor(ball.Color));
+        GivesStrategy(ball);
+        ball.IsLaunched = true;
+        return ball;
     }
-    public void RemakeComet(Comet comet)
+    public void RemakeBall(Ball ball)
     {
-        comet.Strategy.OnRemakeComet -= RemakeComet;
-        float damage = 5f;
-        comet.IsLaunched = false;
-        comet.HideMe();
-        Vector2 scale = _difficultyHandler.GetScale();
-        Vector3 pointStart = _pointGenerator.GetStartPoint(scale);
-        comet.SetStartPoint(pointStart);
-        comet.TransferToPosition(pointStart);
-        comet.SetDamage(damage);
-        GivesStrategy(comet);
-        _paintingRoom.GetColor(comet);
+        ball.Strategy.OnRemakeBall -= RemakeBall;
+        ball.IsLaunched = false;
+        ball.HideMe();
+
+        ScaleAndPointStartInit();
+
+        ball.SetStartPoint(_pointStartBall);
+        ball.SetScale(_scaleBall);
+
+
+        ball.TransferToPosition(_pointStartBall);
+        GivesStrategy(ball);
+
+        ball.Painting(_paintingRoom.GetColor(ball.Color));
     }
     public Particle CreateParticle(Vector3 spawnPoint, Transform parent)
     {
@@ -61,15 +68,20 @@ public class Factory : ScriptableObject
         particle.HideMe();
         return particle;
     }
-    public T CreateProduct<T>(T prefab, Vector3 spawnPoint, Transform parent) where T : MonoBehaviour
+    private T CreateProduct<T>(T prefab, Vector3 spawnPoint, Transform parent) where T : MonoBehaviour
     {
         T instance = Instantiate(prefab, spawnPoint, Quaternion.identity, parent);
         return instance;
     }
-    private void GivesStrategy(Comet comet)
+    private void GivesStrategy(Ball ball)
     {
         Strategy strategy = _strategyProvider.GetStrategy(_difficultyHandler.GetSpeed());
-        strategy.OnRemakeComet += RemakeComet;
-        comet.SetStrategy(strategy);
+        strategy.OnRemakeBall += RemakeBall;
+        ball.SetStrategy(strategy);
+    }
+    private void ScaleAndPointStartInit()
+    {
+        _scaleBall = _difficultyHandler.GetScale();
+        _pointStartBall = _pointGenerator.GetStartPoint(_scaleBall);
     }
 }

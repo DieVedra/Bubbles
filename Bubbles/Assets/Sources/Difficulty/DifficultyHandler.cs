@@ -5,9 +5,9 @@ public class DifficultyHandler
     private AnimationCurve _curveScale;
     private AnimationCurve _curveSpeed;
     private FloatRange _floatRange;
+    private readonly float _rangeNumberSpeed;
+    private readonly float _rangeNumberScale;
     private float _currentDifficulty = 0f;
-    private float _rangeNumberSpeed;
-    private float _rangeNumberScale;
     private float _variable;
     public DifficultyHandler(AnimationCurve curveScale, AnimationCurve curveSpeed, float rangeNumberSpeed, float rangeNumberScale)
     {
@@ -29,9 +29,9 @@ public class DifficultyHandler
     {
         return _curveSpeed.Evaluate(CountsNumberFromRange(_currentDifficulty, _rangeNumberSpeed));
     }
-    private float CountsNumberFromRange(float difficulty, float number)
+    private float CountsNumberFromRange(float currentDifficulty, float rangeNumber)
     {
-        _floatRange = new FloatRange(difficulty, difficulty += number);
+        _floatRange = new FloatRange(currentDifficulty, currentDifficulty += rangeNumber);
         return _floatRange.RandomValueInRange;
     }
 }

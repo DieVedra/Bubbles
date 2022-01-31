@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Pool : MonoBehaviour
 {
+    private const int MAX_COUNT_ON_SCREEN = 3;
     [SerializeField] private Factory _factory;
     [SerializeField] private Transform _leftBorderPoint;
     [SerializeField] private Transform _rightBorderPoint;
@@ -11,11 +12,10 @@ public class Pool : MonoBehaviour
     private Mover _mover;
     private Sound _sound;
     private StrategyVisitorDetect _strategyVisitorDetect = new StrategyVisitorDetect();
-    private List<Comet> _comets = new List<Comet>();
+    private List<Ball> _balls = new List<Ball>();
     private List<Particle> _particles = new List<Particle>();
     private int _numberRunning;
-    private int _maxCountOnScreen = 3;
-    public IReadOnlyList<Comet> Comets => _comets;
+    public IReadOnlyList<Ball> Balls => _balls;
     public Mover Mover => _mover;
 
     public void Init(Difficulty difficulty, Sound sound)
@@ -23,83 +23,83 @@ public class Pool : MonoBehaviour
         _transform = GetComponent<Transform>();
         _sound = sound;
         _difficulty = difficulty;
-        _mover = new Mover(Comets);
+        _mover = new Mover(Balls);
         _factory.Init(new PointGenerator(_leftBorderPoint.position, _rightBorderPoint.position));
         _difficulty.OnChangeDifficulty += _factory.DifficultyHandler.SetDifficulty;
         _difficulty.OnChangeDifficulty += _factory.StrategyProvider.SetDifficulty;
     }
 
-    public void LaunchComet()//запускает по вызову таймера 
+    public void LaunchBall()
     {
-        if (_comets.Count == 0)
+        if (_balls.Count == 0)
         {
             Generate();
-            return; //выйти из метода при генерации первого обьекта
+            return; //exit the method when generating first object
         }
-        if (RelaunchComet() == false)
+        if (RelaunchBall() == false)
         {
-            Generate(); // создать обьект если нет свободных 
+            Generate(); // create new object if there are no available
         }
     }
-    public void DetectComet(Comet comet)
+    public void DetectBall(Ball ball)
     {
-        comet.Strategy.OnCkickSound += _sound.PlayTouch1;
-        comet.Strategy.OnParticleSound1 += _sound.PlayExplosion1;
-        StrategyHandler(comet.Strategy, comet);
+        ball.Strategy.OnCkickSound += _sound.PlayTouch1;
+        ball.Strategy.OnParticleSound1 += _sound.PlayExplosion1;
+        StrategyHandler(ball.Strategy, ball);
         LaunchByTouch();
-        comet.Strategy.OnCkickSound -= _sound.PlayTouch1;
-        comet.Strategy.OnParticleSound1 -= _sound.PlayExplosion1;
+        ball.Strategy.OnCkickSound -= _sound.PlayTouch1;
+        ball.Strategy.OnParticleSound1 -= _sound.PlayExplosion1;
     }
-    public void FallenComet(Comet comet)
+    public void FallenBall(Ball ball)
     {
         _sound.PlayExplosion2();
-        comet.Strategy.FallenComet(comet);
+        ball.Strategy.FallenBall(ball);
     }
     public void ResetPool()
     {
-        for (int i = 0; i < _comets.Count; i++)
+        for (int i = 0; i < _balls.Count; i++)
         {
-            Terminate(_comets[i].gameObject);
+            Terminate(_balls[i].gameObject);
             Terminate(_particles[i].gameObject);
         }
-        _comets.Clear();
+        _balls.Clear();
         _particles.Clear();
     }
     private void LaunchByTouch()    
     {
         _numberRunning = 0;
-        for (int i = 0; i < _comets.Count; i++)
+        for (int i = 0; i < _balls.Count; i++)
         {
-            if (_comets[i].IsLaunched == true)
+            if (_balls[i].IsLaunched == true)
             {
                 _numberRunning++;
             }
         }
-        if (_numberRunning > _maxCountOnScreen)    //чето придумать что б от сложности регулировалось
+        if (_numberRunning > MAX_COUNT_ON_SCREEN)
         {
             return;
         }
         else
         {
-            LaunchComet();
+            LaunchBall();
         }
     }
-    private bool RelaunchComet()
+    private bool RelaunchBall()
     {
-        for (int i = 0; i < _comets.Count; i++)
+        for (int i = 0; i < _balls.Count; i++)
         {
-            if (_comets[i].IsLaunched == false) //если комета не запущена
+            if (_balls[i].IsLaunched == false)
             {
-                _comets[i].UnHideMe(); //включает 
-                _comets[i].IsLaunched = true; //помечает как запущенное
-                return true; //не генерировать новый обьект
+                _balls[i].UnHideMe();
+                _balls[i].IsLaunched = true;
+                return true; // do not generate new object
             }
         }
-        return false; //генерировать новый обьект
+        return false; // generate new object
     }
     private void Generate()
     {
-        GenerateComet(GenetateParticle());
+        GenerateBall(GenetateParticle());
     }
     private Particle GenetateParticle()
     {
@@ -107,10 +107,10 @@ public class Pool : MonoBehaviour
         AddInList(_particles, particle);
         return particle;
     }
-    private void GenerateComet(Particle particle)
+    private void GenerateBall(Particle particle)
     {
-        Comet comet = _factory.CreateComet(_transform, _comets.Count, 5f, particle);
-        AddInList(_comets, comet);
+        Ball ball = _factory.CreateBall(_transform, particle);
+        AddInList(_balls, ball);
     }
     private void AddInList<T>(List<T> list, T obj)
     {
@@ -120,23 +120,23 @@ public class Pool : MonoBehaviour
     {
         Destroy(gameObject);
     }
-    private void StrategyHandler(Strategy strategy, Comet comet)
+    private void StrategyHandler(Strategy strategy, Ball ball)
     {
-        strategy.Accept(_strategyVisitorDetect, comet);
+        strategy.Accept(_strategyVisitorDetect, ball);
     }
     private class StrategyVisitorDetect : IStrategyVisitor
     {
-        public void Visit(UsualStrategy usualStrategy, Comet comet)
+        public void Visit(UsualStrategy usualStrategy, Ball ball)
         {
-            usualStrategy.StrategyBehaviorDetect(comet);
+            usualStrategy.StrategyBehaviorDetect(ball);
         }
-        public void Visit(JumpingStrategy jumpingStrategy, Comet comet)
+        public void Visit(JumpingStrategy jumpingStrategy, Ball ball)
         {
-            jumpingStrategy.StrategyBehaviorDetect(comet);
+            jumpingStrategy.StrategyBehaviorDetect(ball);
         }
-        public void Visit(AcceleratingStrategy acceleratingStrategy, Comet comet)
+        public void Visit(AcceleratingStrategy acceleratingStrategy, Ball ball)
         {
-            acceleratingStrategy.StrategyBehaviorDetect(comet);
+            acceleratingStrategy.StrategyBehaviorDetect(ball);
         }
     }
 }
